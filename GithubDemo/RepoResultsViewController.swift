@@ -59,6 +59,20 @@ class RepoResultsViewController: UIViewController, UITableViewDataSource {
         
     }
     
+    
+    // MARK: - Navigation
+    
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
+        
+        let navController = segue.destination as! UINavigationController
+        let vc = navController.topViewController as! SearchSettingsViewController
+        vc.settings = self.searchSettings
+        vc.delegate = self
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if let repos = repos {
             return repos.count
@@ -87,7 +101,7 @@ class RepoResultsViewController: UIViewController, UITableViewDataSource {
 }
 
 // SearchBar methods
-extension RepoResultsViewController: UISearchBarDelegate {
+extension RepoResultsViewController: UISearchBarDelegate, SettingsPresentingViewControllerDelegate {
     
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         searchBar.setShowsCancelButton(true, animated: true)
@@ -108,5 +122,14 @@ extension RepoResultsViewController: UISearchBarDelegate {
         searchSettings.searchString = searchBar.text
         searchBar.resignFirstResponder()
         doSearch()
+    }
+    
+    func didSaveSettings(settings: GithubRepoSearchSettings) {
+        searchSettings.minStars = settings.minStars
+        doSearch()
+    }
+    
+    func didCancelSettings() {
+        
     }
 }
